@@ -340,11 +340,13 @@
 
 	var TYPE_STATICS = {};
 	TYPE_STATICS[reactIs.ForwardRef] = FORWARD_REF_STATICS;
+	TYPE_STATICS[reactIs.Memo] = MEMO_STATICS;
 
 	function getStatics(component) {
-	    if (reactIs.isMemo(component)) {
-	        return MEMO_STATICS;
-	    }
+	  	// React v16.11 and below
+	  	if (reactIs.isMemo(component)) {
+	    	return MEMO_STATICS;
+	  	} // React v16.12 and above
 	    return TYPE_STATICS[component['$$typeof']] || REACT_STATICS;
 	}
 
@@ -377,16 +379,14 @@
 
 	        for (var i = 0; i < keys.length; ++i) {
 	            var key = keys[i];
-	            if (!KNOWN_STATICS[key] && !(blacklist && blacklist[key]) && !(sourceStatics && sourceStatics[key]) && !(targetStatics && targetStatics[key])) {
-	                var descriptor = getOwnPropertyDescriptor(sourceComponent, key);
-	                try {
-	                    // Avoid failures from read-only properties
-	                    defineProperty(targetComponent, key, descriptor);
-	                } catch (e) {}
-	            }
+                if (!KNOWN_STATICS[key] && !(blacklist && blacklist[key]) && !(sourceStatics && sourceStatics[key]) && !(targetStatics && targetStatics[key])) {
+                    var descriptor = getOwnPropertyDescriptor(sourceComponent, key);
+                    try {
+                        // Avoid failures from read-only properties
+                        defineProperty(targetComponent, key, descriptor);
+                    } catch (e) {}
+                }
 	        }
-
-	        return targetComponent;
 	    }
 
 	    return targetComponent;
